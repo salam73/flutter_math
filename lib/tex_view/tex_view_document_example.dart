@@ -1,20 +1,22 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_math_fork/flutter_math.dart';
-import "dart:math";
-import 'dart:math' as math;
 import 'package:flutter_tex/flutter_tex.dart';
 
-import 'package:flutter_math_fork/tex.dart';
+class TeXViewFontsExamples extends StatelessWidget {
+  final TeXViewRenderingEngine renderingEngine;
 
-class MathJax extends StatelessWidget {
-  MathJax({Key? key}) : super(key: key);
+  TeXViewFontsExamples(
+      {Key? key, this.renderingEngine = const TeXViewRenderingEngine.katex()})
+      : super(key: key);
+
 
   String problemStringFormat(String problem) {
     problem = problem.replaceAll('\f', '\\f');
     problem = problem.replaceAll('l', '\\l');
     problem = problem.replaceAll('s', '\\s');
     problem = problem.replaceAll('\r', '\\r');
-    problem = problem.replaceAll(' ', '.');
+    problem = problem.replaceAll(' ', '*');
 
     return problem;
   }
@@ -105,6 +107,22 @@ class MathJax extends StatelessWidget {
       'prob': '\frac{9 \left(18-\frac{7 \sqrt{48+1}+5}{6}\right)-9}{9}',
       'ans': 8
     },
+    {
+      'prob': '49=\left(\frac{30-\frac{6 \sqrt{7 x+7}+3}{5}}{3}\right)^2',
+      'ans':6
+    },
+ {
+      'prob': '9=\left(\frac{\frac{36}{\left(\frac{7 \left(18-x\right)-4}{8}\right)^2}+2}{2}\right)^2',
+      'ans':14
+    },
+ {
+      'prob': '4=8-\left(\frac{16-\frac{\left(\frac{x+2}{2}\right)^2-7}{7}}{5}\right)^2',
+      'ans':12
+    },
+  {
+      'prob': '5=\frac{\left(\frac{18}{\left(\frac{\frac{\frac{\frac{x+20}{7}+8}{2}+6}{2}+9}{3}\right)^2-16}\right)^2+6}{2}',
+      'ans':8
+    },
   ];
   String? question;
   int? answer;
@@ -140,9 +158,8 @@ class MathJax extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double m = MediaQuery.of(context).size.width / 22;
 
-    // gen2=gen2.split('').reversed.join();
+    double m = MediaQuery.of(context).size.width / 22;
 
     List<Map> arabicProblemList = [];
     for (var element in problemsList) {
@@ -164,70 +181,82 @@ class MathJax extends StatelessWidget {
       answer = problem!['ans'];
     }
     check = false;
-    // gen2 = gen2.replaceAll(' ', '.');
-
-    SyntaxTree ast;
-    try {
-      ast = SyntaxTree(
-          greenRoot: TexParser(r'\frac a b', TexParserSettings()).parse());
-    } on ParseException catch (e) {
-      // Handle my error here
-    }
 
     return StatefulBuilder(
-      builder: (BuildContext context, updateFunction) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Center(
-                child: SizedBox(
-                  child: Math.tex(
-                    //  r'i\hbar\frac{\partial}{\partial t}\Psi(\vec x,t) = -\frac{\hbar}{2m}\nabla^2\Psi(\vec x,t)+ V(\vec x)\Psi(\vec x,t)',
-
-        '$question'
-          ,
-                    mathStyle: MathStyle.script,
-
-                    //  r'\frac{\frac{45}{\sqrt{6*\left(6*\sqrt{4}-8\right)+1}}+9}{9}',
-                    textStyle: TextStyle(color: Colors.black, fontSize: m),
-                    onErrorFallback: (err) => Container(
-                      color: Colors.black,
-                      child: Text(err.messageWithType,
-                          style: TextStyle(color: Colors.white)),
+          builder: (BuildContext context, updateFunction) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: SizedBox(
+                      child: TeXView(
+                          renderingEngine: renderingEngine,
+                          child: TeXViewDocument(r'$$'
+                              '$question'
+                              r'$$', style: TeXViewStyle(
+                              fontStyle: TeXViewFontStyle(
+                                fontSize: m.round(),))
+                             // backgroundColor: Colors.green)
+                          ),
+                          loadingWidgetBuilder: (context) => Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const <Widget>[
+                                    CircularProgressIndicator(),
+                                    Text("Rendering...")
+                                  ],
+                                ),
+                              )),
                     ),
-                    textScaleFactor: 1.4,
                   ),
                 ),
-              ),
-            ),
-
-            Text(answer!.toString()),
-            const SizedBox(
-              height: 30,
-            ),
-            Row(
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      updateFunction(() => getRandomQuestion());
-                    },
-                    child: const Text('update')),
-                ElevatedButton(
-                    onPressed: () {
-                      updateFunction(() => arabicFormat());
-                    },
-                    child: const Text('arabicFormat')),
-                ElevatedButton(
-                    onPressed: () {
-                      updateFunction(() => englishFormat());
-                    },
-                    child: const Text('englishFormat')),
+                Text(answer!.toString()),
+                const SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          updateFunction(() => getRandomQuestion());
+                        },
+                        child: const Text('update')),
+                    ElevatedButton(
+                        onPressed: () {
+                          updateFunction(() => arabicFormat());
+                        },
+                        child: const Text('arabicFormat')),
+                    ElevatedButton(
+                        onPressed: () {
+                          updateFunction(() => englishFormat());
+                        },
+                        child: const Text('englishFormat')),
+                  ],
+                )
               ],
-            )
-          ],
+            );
+          },
+
+
+        /*  TeXView(
+          renderingEngine: renderingEngine,
+          child: TeXViewDocument(r'$$'
+              '$question2'
+              r'$$'),
+          loadingWidgetBuilder: (context) => Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const <Widget>[
+                    CircularProgressIndicator(),
+                    Text("Rendering...")
+                  ],
+                ),
+              )),*/
         );
-      },
-    );
   }
 }
