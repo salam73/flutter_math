@@ -36,7 +36,14 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_math_fork: ^0.6.3+1
   flutter_map: ^2.2.0
-  catex: ^0.0.1+8
+  flutter_countdown_timer: ^4.1.0
+  circular_countdown_timer: ^0.2.2
+  circular_countdown: ^2.1.0
+  stop_watch_timer:
+  flutter_tex: ^4.0.3+4
+
+
+
 
 dev_dependencies:
   flutter_test:

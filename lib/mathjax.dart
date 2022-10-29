@@ -131,7 +131,7 @@ class MathJax extends StatelessWidget {
   }
 
   getRandomQuestion() {
-    problem = problemsList[Random().nextInt(problemsList.length)];
+    problem = problemsList[problemsList.length];
     question = problem!['prob'];
     answer = problem!['ans'];
   }
@@ -159,20 +159,14 @@ class MathJax extends StatelessWidget {
     // problemsList.add({'prob':'hello','ans':6});
 
     if (check) {
-      problem = problemsList[Random().nextInt(problemsList.length)];
+      problem = problemsList[problemsList.length];
       question = problem!['prob'];
       answer = problem!['ans'];
     }
     check = false;
     // gen2 = gen2.replaceAll(' ', '.');
 
-    SyntaxTree ast;
-    try {
-      ast = SyntaxTree(
-          greenRoot: TexParser(r'\frac a b', TexParserSettings()).parse());
-    } on ParseException catch (e) {
-      // Handle my error here
-    }
+
 
     return StatefulBuilder(
       builder: (BuildContext context, updateFunction) {

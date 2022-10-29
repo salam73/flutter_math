@@ -1,10 +1,21 @@
+import 'package:circular_countdown/circular_countdown.dart';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
+
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_math_fork/ast.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter_math_fork/tex.dart';
+import 'package:fluttermath/flutter_stop_watch.dart';
 import 'package:fluttermath/home_page.dart';
 import 'package:fluttermath/home_student.dart';
+import 'package:fluttermath/mathjax.dart';
+import 'package:fluttermath/stopwatch/main_page.dart';
+import 'package:fluttermath/stopwatch/stopwatch_page.dart';
+import 'package:fluttermath/tex_view/MyLatexApp.dart';
+import 'package:fluttermath/tex_view/tex_view_document_example.dart';
 import 'package:provider/provider.dart';
+import 'package:quiver/async.dart' as ttm;
 
 void main() {
   runApp(const MyApp());
@@ -18,15 +29,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'الرياضيات',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: //HomePage()
           // HomeStudent()
           //  DemoPage(),
-         // MyMath(),
       MyMath(),
+     // MyLatexApp()
+      // TeXViewFontsExamples(),
+
     );
   }
 }
@@ -46,131 +59,56 @@ var g='\epsilon = \frac 2 {3 + 2}';
   }
 }*/
 
-
 class MyMath extends StatelessWidget {
-  const MyMath({Key? key}) : super(key: key);
+  MyMath({Key? key}) : super(key: key);
+  int _start = 10;
+  int _current = 10;
 
   @override
   Widget build(BuildContext context) {
-    double m = MediaQuery.of(context).size.width / 22;
-
-    var gen2 = '10=\left(\frac{7 \left(\left(\frac{\frac{5 \left(\frac{\frac{64}{16-x}+4}{6}\right)^2+4}{4}+4}{5}\right)^2+2\right)-36}{3}\right)^2+6';
-     gen2=gen2.replaceAll('\f', '\\f');
-     gen2=gen2.replaceAll('l', '\\l');
-     gen2=gen2.replaceAll('s', '\\s');
-     gen2=gen2.replaceAll('\r', '\\r');
-
- // print(string2Raw(gen2));
 
 
+    var gen2 = '\frac{3 \left(18-9\right)-9}{6}';
+    // gen2=gen2.split('').reversed.join();
+    gen2 = gen2.replaceAll('\f', '\\f');
+    gen2 = gen2.replaceAll('l', '\\l');
+    gen2 = gen2.replaceAll('s', '\\s');
+    gen2 = gen2.replaceAll('\r', '\\r');
+    gen2 = gen2.replaceAll(' ', '.');
 
+    // print(string2Raw(gen2));
+    final stopwatch = Stopwatch();
+    int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 12;
 
+    void onEnd() {
+      print('onEnd');
+    }
 
+    final int _duration = 10;
+    final CountDownController _controller = CountDownController();
 
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text('hello math'),
+        title: Text('مرحبا بالرياضيات'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+      // backgroundColor: Colors.grey[900],
+      body: Column(
 
-            Math.tex(
-              gen2,
-              textStyle: TextStyle(color: Colors.green, fontSize: m),
-              onErrorFallback: (err) => Container(
-                color: Colors.black,
-                child: Text(err.messageWithType,
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ),
+        children:  [
+          StopwatchPage(),
 
-          ],
-        ),
+         /* StopWatchTimerPage(),
+          const SizedBox(
+            height: 0,1
+          ),*/
+
+            TeXViewFontsExamples(),
+        ],
       ),
+
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
-
-/*class DemoPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var gen =
-        '9=\frac{\left(\frac{\left(\frac{x+10}{2}\right)^2-7}{6}\right)^2-4}{5}';
-
-    print('this is g=$gen');
-    return Center(
-      child: Scaffold(
-        body: Container(
-          constraints: BoxConstraints(maxWidth: 800),
-          child: ChangeNotifierProvider(
-            create: (context) => TextEditingController(),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Consumer<TextEditingController>(
-                    builder: (context, controller, _) => TextField(
-                      controller: controller,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Input TeX equation here',
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Center(
-                          child: Text(
-                            "Flutter Math's output",
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            alignment: Alignment.topCenter,
-                            padding: const EdgeInsets.all(10),
-                            child: Consumer<TextEditingController>(
-                                builder: (context, controller, _) {
-                              print(controller.value.text);
-                              gen = controller.value.text;
-                              print(gen);
-                              return SelectableMath.tex(
-                                controller.value.text,
-                                textStyle: const TextStyle(fontSize: 22),
-                              );
-                            }),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}*/
